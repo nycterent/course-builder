@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "name": "slurm-course-builder",
+  "description": "SLURM Course Builder - Lithuanian DevOps/SysAdmin Training Platform",
+  "type": "application",
+  "framework": "nextjs",
+  "buildCommand": "pnpm install && pnpm run build",
+  "startCommand": "pnpm start",
+  "port": 3000,
+  "environment": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_APP_NAME": "slurm-course-builder",
+    "NEXT_PUBLIC_HOST": "kolega.neatsiliknuo.ai",
+    "NEXT_PUBLIC_URL": "https://kolega.neatsiliknuo.ai",
+    "NEXTAUTH_URL": "https://kolega.neatsiliknuo.ai",
+    "NEXTAUTH_SECRET": "{{AUTO_GENERATED_SECRET}}",
+    "DATABASE_URL": "{{DATABASE_URL}}",
+    "REDIS_URL": "{{REDIS_URL}}"
+  },
+  "services": [
+    {
+      "name": "mysql",
+      "type": "mysql",
+      "version": "8.0",
+      "database": "slurm_courses",
+      "username": "slurm_user",
+      "password": "{{AUTO_GENERATED_PASSWORD}}",
+      "port": 3306,
+      "volume": "/var/lib/mysql"
+    },
+    {
+      "name": "redis",
+      "type": "redis",
+      "version": "7-alpine",
+      "port": 6379,
+      "volume": "/data"
+    }
+  ],
+  "domains": [
+    {
+      "domain": "kolega.neatsiliknuo.ai",
+      "ssl": true,
+      "redirectToHttps": true
+    }
+  ],
+  "healthCheck": {
+    "path": "/api/health",
+    "port": 3000,
+    "timeout": 30
+  },
+  "resources": {
+    "memory": "2048Mi",
+    "cpu": "1000m"
+  },
+  "scaling": {
+    "minReplicas": 1,
+    "maxReplicas": 3,
+    "targetCPU": 80
+  }
+}

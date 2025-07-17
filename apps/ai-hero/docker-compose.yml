@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Course Builder AI Hero Application
+  ai-hero:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://root:coursebuilder@mysql:3306/coursebuilder
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=your-secret-key-here
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    restart: unless-stopped
+    networks:
+      - coursebuilder-network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=coursebuilder
+      - MYSQL_DATABASE=coursebuilder
+      - MYSQL_USER=coursebuilder
+      - MYSQL_PASSWORD=coursebuilder
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - coursebuilder-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - coursebuilder-network
+
+  # Database admin interface
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=coursebuilder
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - coursebuilder-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  coursebuilder-network:
+    driver: bridge
