@@ -17,13 +17,22 @@ echo ""
 
 # Test API connectivity
 echo "🔍 Testing Dokploy API connectivity..."
-API_TEST=$(curl -s -H "Authorization: Bearer claudeNgijGrymhdGthpHfyKuIcikrofhRjkdqoShPmSNaMpkqbHiCczFkOYfsQlkRuHhR" \
+API_KEY="${DOKPLOY_API_KEY:-}"
+
+# Check if API key is provided
+if [ -z "$API_KEY" ]; then
+    echo "❌ Error: DOKPLOY_API_KEY environment variable is required"
+    echo "Usage: DOKPLOY_API_KEY=your_api_key ./dokploy-deploy.sh"
+    exit 1
+fi
+
+API_TEST=$(curl -s -H "Authorization: Bearer $API_KEY" \
   "$DOKPLOY_URL/api/projects" 2>/dev/null || echo "API_ERROR")
 
 if [[ "$API_TEST" == "API_ERROR" ]]; then
     echo "❌ Cannot connect to Dokploy API. Please check:"
     echo "   - URL: $DOKPLOY_URL"
-    echo "   - API Key: claudeNgijGrymhdGthpHfyKuIcikrofhRjkdqoShPmSNaMpkqbHiCczFkOYfsQlkRuHhR"
+    echo "   - API Key: [HIDDEN]"
     echo ""
     echo "🔧 Manual Deployment Steps:"
     echo "1. Login to Dokploy Console: $DOKPLOY_URL"
@@ -44,7 +53,7 @@ echo "✅ Dokploy API is accessible"
 # Create project using API
 echo "📁 Creating new project..."
 curl -X POST \
-  -H "Authorization: Bearer claudeNgijGrymhdGthpHfyKuIcikrofhRjkdqoShPmSNaMpkqbHiCczFkOYfsQlkRuHhR" \
+  -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "'$PROJECT_NAME'",

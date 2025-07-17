@@ -6,7 +6,14 @@
 set -e
 
 # Configuration
-DOKPLOY_API_KEY="claudeNgijGrymhdGthpHfyKuIcikrofhRjkdqoShPmSNaMpkqbHiCczFkOYfsQlkRuHhR"
+DOKPLOY_API_KEY="${DOKPLOY_API_KEY:-}"
+
+# Check if API key is provided
+if [ -z "$DOKPLOY_API_KEY" ]; then
+    echo "❌ Error: DOKPLOY_API_KEY environment variable is required"
+    echo "Usage: DOKPLOY_API_KEY=your_api_key ./deploy-to-dokploy.sh"
+    exit 1
+fi
 DOKPLOY_URL="https://console.hackrsvalv.com"
 PROJECT_NAME="slurm-course-builder"
 GITHUB_REPO="https://github.com/your-username/course-builder.git"

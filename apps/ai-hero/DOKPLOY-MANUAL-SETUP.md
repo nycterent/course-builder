@@ -6,7 +6,7 @@ Since Dokploy is designed for web UI management, here's how to manually set up t
 
 ### 1. Access Dokploy Console
 - **URL**: https://console.hackrsvalv.com
-- **API Key**: claudeNgijGrymhdGthpHfyKuIcikrofhRjkdqoShPmSNaMpkqbHiCczFkOYfsQlkRuHhR
+- **API Key**: [Get from Dokploy Console → Settings → API Keys]
 
 ### 2. Create New Project
 1. Click "New Project"
